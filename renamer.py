@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-URL = "https://www.themoviedb.org/tv/37854/season/21"
+URL = "https://www.themoviedb.org/tv/83054-karakuri-circus/season/1"
 URL = URL + "?language=it-IT"
 path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "files")
 
@@ -24,9 +24,8 @@ def get_titles():
                 episode = "0"+episode
             title = str(row).split("title=\"")[1].split(
                 ": Episode ")[1].split(" - ")[1].split("\">")[0].replace(".", "")
-            if(int(episode) > 1000 and int(episode) < 1034):
-                titles.append({"anime": anime, "season": season,
-                               "episode": episode, "title": title})
+            titles.append({"anime": anime, "season": season,
+                           "episode": episode, "title": title})
     return titles
 
 
@@ -63,6 +62,8 @@ if __name__ == '__main__':
     files = get_files_list()
     print("Done!\n")
     print_list(files)
+    print("Num files: " + str(len(files)))
+    print("Num titles: " + str(len(titles)))
     print("\nIs the number of files equal the number of episodes? " +
           str(len(files) == len(titles)))
     if(len(files) != len(titles)):
