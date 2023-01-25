@@ -2,25 +2,27 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-URL = "https://www.themoviedb.org/tv/83054-karakuri-circus/season/1"
-URL = URL + "?language=it-IT"
+URL = "https://www.themoviedb.org/tv/131041/season/1" + "?language=it-IT"
 path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "files")
 
 
 def get_titles():
     titles = []
-
-    page = requests.get(URL)
+    headers = requests.utils.default_headers()
+    headers.update({
+        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0',
+    })
+    page = requests.get(URL, headers=headers)
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.find_all("div", {'class': ['title']})
     for r in results:
         row = r.find_all("a", {"class": ['no_click', 'open']})
-        if(row != []):
+        if (row != []):
             anime = str(row).split("title=\"")[1].split(": Season ")[0]
             season = str(row).split("title=\"")[1].split(": Season ")[1][:1]
             episode = str(row).split("title=\"")[1].split(
                 ": Episode ")[1].split(" - ")[0]
-            if(len(episode) == 1):
+            if (len(episode) == 1):
                 episode = "0"+episode
             title = str(row).split("title=\"")[1].split(
                 ": Episode ")[1].split(" - ")[1].split("\">")[0].replace(".", "")
@@ -32,13 +34,19 @@ def get_titles():
 def get_files_list():
     files = []
     for file in os.listdir(path):
-        if(".ini" not in file):
+        if (".ini" not in file):
             files.append(file)
     return files
 
 
+def replace_error_char(string):
+    return string.replace("?", "").replace(":", "").replace("/", "").replace("\"", "")
+
+
 def get_new_title(title, extension):
-    return title["anime"] + " - S" + title["season"] + "E" + title["episode"] + " - " + title["title"].replace("?", "").replace(":", "") + "." + extension
+    return replace_error_char(title["anime"]) + " - S" + title["season"] \
+        + "E" + title["episode"] + " - " + \
+        replace_error_char(title["title"]) + "." + extension
 
 
 def rename_files(titles, files):
@@ -66,7 +74,7 @@ if __name__ == '__main__':
     print("Num titles: " + str(len(titles)))
     print("\nIs the number of files equal the number of episodes? " +
           str(len(files) == len(titles)))
-    if(len(files) != len(titles)):
+    if (len(files) != len(titles)):
         print("\nERROR")
     else:
         rename_files(titles, files)
