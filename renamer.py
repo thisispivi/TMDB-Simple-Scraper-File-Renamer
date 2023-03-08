@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-URL = "https://www.themoviedb.org/tv/131041/season/1" + "?language=it-IT"
+URL = "https://www.themoviedb.org/tv/105556/season/2" + "?language=it-IT"
 path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "files")
 
 
@@ -74,12 +74,9 @@ if __name__ == '__main__':
     print("Num titles: " + str(len(titles)))
     print("\nIs the number of files equal the number of episodes? " +
           str(len(files) == len(titles)))
-    if (len(files) != len(titles)):
-        print("\nERROR")
-    else:
-        rename_files(titles, files)
-        print("Done!\n")
-        print("Getting the new files in the folder\n")
-        files = get_files_list()
-        print("Done!\n")
-        print_list(files)
+    rename_files(titles, files)
+    print("Done!\n")
+    print("Getting the new files in the folder\n")
+    files = get_files_list()
+    print("Done!\n")
+    print_list(files)
